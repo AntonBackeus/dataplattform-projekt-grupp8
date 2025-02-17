@@ -1,27 +1,8 @@
 from quixstreams import Application
 from constants import COINMARKET_API
-from requests import Session
-import json
 from pprint import pprint
+from connect_api import get_latest_coin_data
 import time
-
-
-def get_latest_coin_data(target_symbol):
-
-    API_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
-
-    parameters = {"symbol": target_symbol, "convert": "USD"}
-
-    headers = {
-        "Accepts": "application/json",
-        "X-CMC_PRO_API_KEY": COINMARKET_API,
-    }
-
-    session = Session()
-    session.headers.update(headers)
-
-    response = session.get(API_URL, params=parameters)
-    return json.loads(response.text)["data"][target_symbol]
 
 
 def main():
@@ -30,7 +11,7 @@ def main():
 
     with app.get_producer() as producer:
         while True:
-            coin_latest = get_latest_coin_data("ORDI")
+            coin_latest = get_latest_coin_data("ORDI", COINMARKET_API, "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest")
 
             kafka_message = coins_topic.serialize(
                 key=coin_latest["symbol"], value=coin_latest

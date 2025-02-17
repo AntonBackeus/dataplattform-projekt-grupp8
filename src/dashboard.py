@@ -8,9 +8,10 @@ from constants import (
     POSTGRES_HOST,
     POSTGRES_PASSWORD,
     POSTGRES_PORT,
+    CURRENCIES,
 )
 
-from charts import line_chart_px, line_chart
+from charts import line_chart
 
 
 connection_string = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DBNAME}"
@@ -29,21 +30,29 @@ def load_data(query):
 
 
 def layout():
-    df = load_data(
-        """
-                SELECT * FROM bitcoin;
-                """
-    )
-    st.markdown("# Bitcoin data")
-    st.markdown("## Latest data")
-    
-    st.dataframe(df.tail())
-    
-    st.markdown("## Bitcoin latest price in USD")
 
-    price_chart = line_chart(x=df.index, y=df["price_usd"], title="price USD")
+    selected_currency = st.selectbox("Choose currency", CURRENCIES)
+
+    df = load_data(
+        f"""
+            SELECT timestamp, coin, ROUND((price_usd * {CURRENCIES[selected_currency]})::NUMERIC, 2) as price, volume FROM ordi;
+        """
+    )
+    st.markdown("# Ordi data")
+    st.markdown(f"## Latest data (in {selected_currency})")
+
+    st.dataframe(df.tail(10))
+
+    st.markdown(f"## Ordi latest price in {selected_currency}")
+
+    price_chart = line_chart(
+        x=df.index,
+        y=df["price"],
+        title=f"Price {selected_currency}",
+    )
 
     st.pyplot(price_chart, bbox_inches="tight")
+
 
 if __name__ == "__main__":
     layout()

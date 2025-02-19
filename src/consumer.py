@@ -7,16 +7,25 @@ from constants import (
     POSTGRES_USER,
 )
 from quixstreams.sinks.community.postgresql import PostgreSQLSink
+import json
 
 
 def extract_coin_data(message):
-    latest_quote = message["quote"]["USD"]
-    return {
-        "coin": message["name"],
-        "price_usd": latest_quote["price"],
-        "volume": latest_quote["volume_24h"],
-        "updated": message["last_updated"],
-    }
+    try:
+        latest_ordi_data = message.get("ordi_data", {})
+        latest_rates = message.get("rates", {})
+
+        return {
+            "name": message.get("name"),
+            "price_usd": latest_ordi_data.get("quote", {})
+            .get("USD", {})
+            .get("price", 0),
+            "price_sek": latest_rates["SEK"],
+            # "volume": latest_ordi_data["volume_24h"],
+            # "updated": message["coin_data"]["last_updated"],
+        }
+    except Exception as e:
+        print(f"Error while processing data: {e}")
 
 
 def create_postgres_sink():
@@ -40,13 +49,11 @@ def main():
     )
 
     coins_topic = app.topic(name="coins", value_deserializer="json")
-
     sdf = app.dataframe(topic=coins_topic)
 
     # transformations
 
     sdf = sdf.apply(extract_coin_data)
-
     sdf.update(lambda message: print(message))
 
     # sink to postgres

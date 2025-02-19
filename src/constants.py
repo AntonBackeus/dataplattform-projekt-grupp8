@@ -3,7 +3,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 COINMARKET_API = os.getenv("COINMARKET_API")
+COINMARKET_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
 
 POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")

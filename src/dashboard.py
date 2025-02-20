@@ -35,7 +35,7 @@ def layout():
 
     df = load_data(
         f"""
-            SELECT timestamp, coin, ROUND((price_usd * {CURRENCIES[selected_currency]})::NUMERIC, 2) as price, volume FROM ordi;
+            SELECT * FROM ordi;
         """
     )
     st.markdown("# Ordi data")

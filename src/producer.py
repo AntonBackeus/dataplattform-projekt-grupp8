@@ -1,7 +1,6 @@
 from quixstreams import Application
-from constants import COINMARKET_API
-from pprint import pprint
-from connect_api import get_latest_coin_data
+from constants import COINMARKET_API, COINMARKET_URL, RATE_URL
+from connect_api import get_latest_coin_data, get_latest_rates
 import time
 
 
@@ -11,25 +10,37 @@ def main():
 
     with app.get_producer() as producer:
         while True:
-            coin_latest = get_latest_coin_data("ORDI", COINMARKET_API, "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest")
+            try:
+                ordi_latest = get_latest_coin_data(
+                    "ORDI", COINMARKET_API, COINMARKET_URL
+                )
+                rate_latest = get_latest_rates(RATE_URL)
 
-            kafka_message = coins_topic.serialize(
-                key=coin_latest["symbol"], value=coin_latest
-            )
+                crypto_data = {
+                    "ordi_data": ordi_latest,
+                    "rates": rate_latest,
+                }
 
-            print(
-                f"produce event with key = {kafka_message.key}, price = {coin_latest['quote']['USD']['price']}"
-            )
+                kafka_message = coins_topic.serialize(
+                    key="cryptocurrency", value=crypto_data
+                )
 
-            producer.produce(
-                topic=coins_topic.name, key=kafka_message.key, value=kafka_message.value
-            )
+                producer.produce(
+                    topic=coins_topic.name,
+                    key=kafka_message.key,
+                    value=kafka_message.value,
+                )
 
-            time.sleep(30)
+                print(
+                    f"Data sent to Kafka: Cryptocurrency - {ordi_latest['name']} with price {ordi_latest['quote']['USD']['price']:.4f} USD / {ordi_latest['quote']['USD']['price'] * rate_latest['SEK']:.2f} SEK / {ordi_latest['quote']['USD']['price'] * rate_latest['NOK']:.2f} NOK"
+                )
+
+                time.sleep(30)
+
+            except Exception as e:
+                print(f"Error sending data {e}")
 
 
 if __name__ == "__main__":
-    # coin_data = get_latest_coin_data()
-    # pprint(coin_data)
 
     main()

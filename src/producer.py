@@ -22,7 +22,7 @@ def main():
                 }
 
                 kafka_message = coins_topic.serialize(
-                    key=ordi_latest["symbol"], value=crypto_data
+                    key="cryptocurrency", value=crypto_data
                 )
 
                 producer.produce(
@@ -32,7 +32,7 @@ def main():
                 )
 
                 print(
-                    f"Data sent to Kafka: Cryptocurrency - {ordi_latest['name']} with price {ordi_latest['quote']['USD']['price']:.4f} USD/ {ordi_latest['quote']['USD']['price'] * rate_latest['SEK']:.2f} SEK"
+                    f"Data sent to Kafka: Cryptocurrency - {ordi_latest['name']} with price {ordi_latest['quote']['USD']['price']:.4f} USD / {ordi_latest['quote']['USD']['price'] * rate_latest['SEK']:.2f} SEK / {ordi_latest['quote']['USD']['price'] * rate_latest['NOK']:.2f} NOK"
                 )
 
                 time.sleep(30)

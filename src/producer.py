@@ -14,10 +14,12 @@ def main():
                 ordi_latest = get_latest_coin_data(
                     "ORDI", COINMARKET_API, COINMARKET_URL
                 )
+                xrp_latest = get_latest_coin_data("XRP", COINMARKET_API, COINMARKET_URL)
                 rate_latest = get_latest_rates(RATE_URL)
 
                 crypto_data = {
                     "ordi_data": ordi_latest,
+                    "xrp_data": xrp_latest,
                     "rates": rate_latest,
                 }
 
@@ -32,10 +34,10 @@ def main():
                 )
 
                 print(
-                    f"Data sent to Kafka: Cryptocurrency - {ordi_latest['name']} with price {ordi_latest['quote']['USD']['price']:.4f} USD / {ordi_latest['quote']['USD']['price'] * rate_latest['SEK']:.2f} SEK / {ordi_latest['quote']['USD']['price'] * rate_latest['NOK']:.2f} NOK"
+                    f"Data sent to Kafka: Cryptocurrencies: {ordi_latest['name']} - ({ordi_latest['quote']['USD']['price']:.4f} USD / {ordi_latest['quote']['USD']['price'] * rate_latest['SEK']:.2f} SEK), {xrp_latest['name']} - ({xrp_latest['quote']['USD']['price']:.4f} USD / {xrp_latest['quote']['USD']['price'] * rate_latest['SEK']:.2f} SEK)"
                 )
 
-                time.sleep(30)
+                time.sleep(60)
 
             except Exception as e:
                 print(f"Error sending data {e}")

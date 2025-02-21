@@ -13,6 +13,7 @@ POSTGRES_DBNAME = os.getenv("POSTGRES_DB")
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 
+COINS = ["ORDI", "XRP"]
 CURRENCIES = ["USD", "EUR", "SEK", "NOK", "DKK", "ISK"]
 
 TIMES = ["1h", "24h", "7d"]

@@ -37,7 +37,7 @@ def main():
                     f"Data sent to Kafka: Cryptocurrencies: {ordi_latest['name']} - ({ordi_latest['quote']['USD']['price']:.4f} USD / {ordi_latest['quote']['USD']['price'] * rate_latest['SEK']:.2f} SEK), {xrp_latest['name']} - ({xrp_latest['quote']['USD']['price']:.4f} USD / {xrp_latest['quote']['USD']['price'] * rate_latest['SEK']:.2f} SEK)"
                 )
 
-                time.sleep(10)
+                time.sleep(60)
 
             except Exception as e:
                 print(f"Error sending data {e}")

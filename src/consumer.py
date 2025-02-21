@@ -15,7 +15,10 @@ def extract_coin_data(message):
     try:
         latest_ordi_data = message.get("ordi_data", {})
         latest_ordi_quote = latest_ordi_data["quote"]["USD"]
-        
+
+        latest_xrp_data = message.get("xrp_data", {})
+        latest_xrp_quote = latest_xrp_data["quote"]["USD"]
+
         latest_rates = message.get("rates", {})
 
         crypto_data = {
@@ -24,7 +27,7 @@ def extract_coin_data(message):
             "symbol": latest_ordi_data["symbol"],
             "max_supply": latest_ordi_data["max_supply"],
             "circul_supply": latest_ordi_data["circulating_supply"],
-            "cmc_rank": latest_ordi_data["cmc_rank"]
+            "cmc_rank": latest_ordi_data["cmc_rank"],
         }
 
         price_data = {
@@ -38,7 +41,6 @@ def extract_coin_data(message):
             "percent_change_1h": latest_ordi_quote["percent_change_1h"],
             "percent_change_24h": latest_ordi_quote["percent_change_24h"],
             "percent_change_7d": latest_ordi_quote["percent_change_7d"],
-
         }
 
         return {"crypto": crypto_data, "price": price_data}
@@ -81,7 +83,6 @@ def main():
     # divide the data into two separate dataframes
     crypto_df = sdf.apply(lambda message: message["crypto"])
     price_df = sdf.apply(lambda message: message["price"])
-
 
     # save the data into the appropriate tables
     crypto_df.sink(postgres_sink_crypto)

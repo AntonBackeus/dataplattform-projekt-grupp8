@@ -12,8 +12,6 @@ from constants import (
     COINS,
 )
 
-
-from charts import line_chart
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
